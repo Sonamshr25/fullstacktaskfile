@@ -1,0 +1,528 @@
+<!-- ##1.Access mic using javascript and whatever you speak it should be converted to text.
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech to Text</title>
+</head>
+<body>
+    <h1>Speech to Text using JavaScript</h1>
+    <p>Click the button and start speaking. Your speech will be converted to text.</p>
+    
+    <!-- Button to start speech recognition -->
+    <button id="startBtn">Start Speech Recognition</button>
+
+    <!-- Area to display converted text -->
+    <p id="outputText"></p>
+
+    <script>
+        // Check if the browser supports speech recognition
+        if ('webkitSpeechRecognition' in window) {
+            const recognition = new webkitSpeechRecognition(); // Create a new SpeechRecognition instance
+            recognition.continuous = true; // Keep listening to speech
+            recognition.interimResults = true; // Get interim results (partial recognition)
+            recognition.lang = 'en-US'; 
+
+            const outputText = document.getElementById('outputText');
+
+            // Start recognition when the button is clicked
+            document.getElementById('startBtn').addEventListener('click', () => {
+                recognition.start(); // Start listening to the user's speech
+                outputText.textContent = 'Listening...'; // Show that the system is listening
+            });
+
+            // When speech is recognized
+            recognition.onresult = (event) => {
+                let finalTranscript = ''; // To hold the final recognized text
+
+                // Loop through all the speech recognition results
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const result = event.results[i];
+                    if (result.isFinal) {
+                        finalTranscript += result[0].transcript + ' '; // Add final transcript
+                    }
+                }
+
+                // Display the recognized text in the outputText element
+                outputText.textContent = finalTranscript;
+            };
+
+            // Handle when speech recognition ends
+            recognition.onend = () => {
+                outputText.textContent += ' (Recognition stopped)';
+            };
+
+            // Handle any errors that occur during speech recognition
+            recognition.onerror = (event) => {
+                outputText.textContent = 'Error occurred: ' + event.error;
+            };
+        } else {
+            alert('Speech Recognition API is not supported in this browser.');
+        }
+    </script>
+</body>
+</html> 
+
+##2.Access camera using javascript and click photo .
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech to Text</title>
+</head>
+<body>
+    <h1>Speech to Text using JavaScript</h1>
+    <p>Click the button and start speaking. Your speech will be converted to text.</p>
+    
+    <!-- Button to start speech recognition -->
+    <button id="startBtn">Start Speech Recognition</button>
+
+    <!-- Area to display converted text -->
+    <p id="outputText"></p>
+
+    <script>
+        // Check if the browser supports speech recognition
+        if ('webkitSpeechRecognition' in window) {
+            const recognition = new webkitSpeechRecognition(); // Create a new SpeechRecognition instance
+            recognition.continuous = true; // Keep listening to speech
+            recognition.interimResults = true; // Get interim results (partial recognition)
+            recognition.lang = 'en-US'; // Set language to English
+
+            // Element to display the recognized text
+            const outputText = document.getElementById('outputText');
+
+            // Start recognition when the button is clicked
+            document.getElementById('startBtn').addEventListener('click', () => {
+                recognition.start(); // Start listening to the user's speech
+                outputText.textContent = 'Listening...'; // Show that the system is listening
+            });
+
+            // When speech is recognized
+            recognition.onresult = (event) => {
+                let finalTranscript = ''; // To hold the final recognized text
+
+                // Loop through all the speech recognition results
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const result = event.results[i];
+                    if (result.isFinal) {
+                        finalTranscript += result[0].transcript + ' '; // Add final transcript
+                    }
+                }
+
+                // Display the recognized text in the outputText element
+                outputText.textContent = finalTranscript;
+            };
+
+            // Handle when speech recognition ends
+            recognition.onend = () => {
+                outputText.textContent += ' (Recognition stopped)';
+            };
+
+            // Handle any errors that occur during speech recognition
+            recognition.onerror = (event) => {
+                outputText.textContent = 'Error occurred: ' + event.error;
+            };
+        } else {
+            alert('Speech Recognition API is not supported in this browser.');
+        }
+    </script>
+</body>
+</html>
+
+##3.Do live stream of camera using javascript .
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Camera Stream</title>
+    <style>
+        video {
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid black;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Camera Stream using JavaScript</h1>
+
+    <!-- Video element to display live stream -->
+    <video id="videoElement" autoplay></video>
+
+    <!-- Button to start and stop the video stream -->
+    <button id="toggleButton">Start Streaming</button>
+
+    <script>
+        // Elements
+        const videoElement = document.getElementById('videoElement');
+        const toggleButton = document.getElementById('toggleButton');
+
+        let mediaStream = null;  // This will hold the MediaStream object
+
+        // Function to start the camera
+        async function startCamera() {
+            try {
+                // Request access to the camera (video only)
+                mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+                // Attach the stream to the video element
+                videoElement.srcObject = mediaStream;
+
+                // Change button text to "Stop Streaming"
+                toggleButton.textContent = 'Stop Streaming';
+            } catch (error) {
+                console.error("Error accessing the camera: ", error);
+                alert("Unable to access the camera. Please check your permissions.");
+            }
+        }
+
+        // Function to stop the camera
+        function stopCamera() {
+            // Stop all tracks in the media stream
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                videoElement.srcObject = null;
+            }
+
+            // Change button text to "Start Streaming"
+            toggleButton.textContent = 'Start Streaming';
+        }
+
+        // Event listener to toggle streaming on button click
+        toggleButton.addEventListener('click', () => {
+            if (toggleButton.textContent === 'Start Streaming') {
+                startCamera();  // Start the camera stream
+            } else {
+                stopCamera();   // Stop the camera stream
+            }
+        });
+    </script>
+</body>
+</html>
+
+##4.Record a video using javascript and post that recording automatically to instagram using javacript.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Video</title>
+    <style>
+        video, canvas {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Record a Video</h1>
+
+    <!-- Video element to display live feed -->
+    <video id="videoElement" autoplay></video>
+
+    <!-- Canvas to show captured frame -->
+    <canvas id="canvasElement" style="display: none;"></canvas>
+
+    <!-- Buttons to start/stop recording -->
+    <button id="startRecording">Start Recording</button>
+    <button id="stopRecording" disabled>Stop Recording</button>
+
+    <!-- Button to download video -->
+    <a id="downloadLink" style="display:none;" download="recorded-video.webm">Download Video</a>
+
+    <script>
+        const videoElement = document.getElementById('videoElement');
+        const startRecordingButton = document.getElementById('startRecording');
+        const stopRecordingButton = document.getElementById('stopRecording');
+        const downloadLink = document.getElementById('downloadLink');
+
+        let mediaStream;
+        let mediaRecorder;
+        let recordedChunks = [];
+
+        // Access the user's camera
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement.srcObject = stream;
+                mediaStream = stream;
+            } catch (error) {
+                console.error("Error accessing the camera: ", error);
+                alert("Unable to access the camera.");
+            }
+        }
+
+        // Start video recording
+        startRecordingButton.addEventListener('click', () => {
+            recordedChunks = [];
+            mediaRecorder = new MediaRecorder(mediaStream);
+
+            mediaRecorder.ondataavailable = event => {
+                recordedChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                downloadLink.href = url;
+                downloadLink.style.display = 'block'; // Show the download link
+            };
+
+            mediaRecorder.start();
+            startRecordingButton.disabled = true;
+            stopRecordingButton.disabled = false;
+        });
+
+        // Stop video recording
+        stopRecordingButton.addEventListener('click', () => {
+            mediaRecorder.stop();
+            mediaStream.getTracks().forEach(track => track.stop());
+            startRecordingButton.disabled = false;
+            stopRecordingButton.disabled = true;
+        });
+
+        // Start camera stream when the page loads
+        startCamera();
+    </script>
+</body>
+</html>
+
+
+##5.Search any name in google take all the links related to this name and create a search engine
+import requests
+
+def search_google(query, api_key, cse_id, num_results=10):
+    """
+    Function to perform a Google search using Google Custom Search API.
+    
+    Args:
+    - query (str): The search query (name or topic).
+    - api_key (str): Your Google API Key.
+    - cse_id (str): Your Custom Search Engine ID (CX).
+    - num_results (int): The number of search results to fetch (default is 10).
+    
+    Returns:
+    - List of URLs returned by Google Search.
+    """
+    search_url = "https://www.googleapis.com/customsearch/v1"
+    params = {
+        'q': query,  # The search query
+        'key': api_key,  # API key
+        'cx': cse_id,  # Custom Search Engine ID
+        'num': num_results,  # Number of results to fetch
+    }
+
+    response = requests.get(search_url, params=params)
+    
+    if response.status_code == 200:
+        search_results = response.json()
+        links = []
+        for item in search_results.get('items', []):
+            links.append(item['link'])  # Extracting the URL
+        return links
+    else:
+        print("Error with Google Search API:", response.status_code)
+        return []
+
+# Replace with your actual API key and CSE ID
+API_KEY = 'YOUR_GOOGLE_API_KEY'
+CSE_ID = 'YOUR_CUSTOM_SEARCH_ENGINE_ID'
+
+# Search query
+query = "Python programming"
+
+# Fetch search results
+links = search_google(query, API_KEY, CSE_ID)
+
+# Print all the fetched links
+for idx, link in enumerate(links, 1):
+    print(f"{idx}. {link}")
+
+
+##6.Connect javascript with the chatgpt and generate response and it should also take input using mic .
+    // Speech Recognition API Setup
+ const startButton = document.getElementById('startButton');
+    const transcriptDisplay = document.getElementById('transcript');
+    const responseDisplay = document.getElementById('response');
+    
+    // Initialize Speech Recognition API (for browsers supporting it)
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    
+    // Set language for recognition
+    recognition.lang = 'en-US';
+    
+    // Start listening when the user clicks the start button
+    startButton.addEventListener('click', () => {
+        recognition.start();
+        transcriptDisplay.textContent = "Listening...";
+    });
+    
+    // Process the speech input when it's transcribed
+    recognition.onresult = async (event) => {
+        const transcript = event.results[0][0].transcript;
+        transcriptDisplay.textContent = `You said: ${transcript}`;
+    
+        // Send the transcript to OpenAI API for ChatGPT response
+        const gptResponse = await getChatGPTResponse(transcript);
+        
+        // Display the response
+        responseDisplay.textContent = `ChatGPT says: ${gptResponse}`;
+        
+        // Speak the response aloud
+        speakResponse(gptResponse);
+    };
+    
+    // Handle errors from Speech Recognition
+    recognition.onerror = (event) => {
+        transcriptDisplay.textContent = `Error: ${event.error}`;
+    };
+    
+    // Function to get response from OpenAI API (ChatGPT)
+    async function getChatGPTResponse(userInput) {
+        const apiKey = 'YOUR_OPENAI_API_KEY'; // Use your own OpenAI API key
+        const endpoint = 'https://api.openai.com/v1/chat/completions';
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+        };
+        
+        const requestBody = {
+            model: "gpt-3.5-turbo",
+            messages: [
+                { role: "user", content: userInput }
+            ]
+        };
+    
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(requestBody)
+            });
+    
+            const data = await response.json();
+            return data.choices[0].message.content;
+        } catch (error) {
+            console.error('Error fetching ChatGPT response:', error);
+            return 'Sorry, there was an error with the request.';
+        }
+    }
+    
+    // Function to speak the ChatGPT response using SpeechSynthesis
+    function speakResponse(responseText) {
+        const utterance = new SpeechSynthesisUtterance(responseText);
+        utterance.lang = 'en-US';
+        speechSynthesis.speak(utterance);
+    }
+
+  ##7.Create a graph of metrics of docker like memory used, satus, storage using javascript and show it on your web page of develop your own cloud
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Docker Metrics Dashboard</title>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+          }
+          canvas {
+              width: 100%;
+              height: 400px;
+          }
+      </style>
+  </head>
+  <body>
+      <h1>Docker Metrics Dashboard</h1>
+      <div>
+          <h3>Memory Usage</h3>
+          <canvas id="memoryChart"></canvas>
+      </div>
+      <div>
+          <h3>CPU Usage</h3>
+          <canvas id="cpuChart"></canvas>
+      </div>
+      <div>
+          <h3>Storage</h3>
+          <canvas id="storageChart"></canvas>
+      </div>
+  
+      <script>
+          // Fetch Docker stats from the server
+          async function fetchDockerStats() {
+              const response = await fetch('/docker-stats');
+              const stats = await response.json();
+              return stats;
+          }
+  
+          // Render Charts
+          async function renderCharts() {
+              const stats = await fetchDockerStats();
+              
+              // Memory Usage Chart
+              const memoryData = stats.map(container => container.memoryUsage);
+              const memoryLabels = stats.map(container => container.name);
+              const memoryChart = new Chart(document.getElementById('memoryChart'), {
+                  type: 'bar',
+                  data: {
+                      labels: memoryLabels,
+                      datasets: [{
+                          label: 'Memory Usage (Bytes)',
+                          data: memoryData,
+                          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                          borderColor: 'rgba(54, 162, 235, 1)',
+                          borderWidth: 1
+                      }]
+                  }
+              });
+  
+              // CPU Usage Chart
+              const cpuData = stats.map(container => container.cpuUsage);
+              const cpuChart = new Chart(document.getElementById('cpuChart'), {
+                  type: 'bar',
+                  data: {
+                      labels: memoryLabels,
+                      datasets: [{
+                          label: 'CPU Usage (Total Usage)',
+                          data: cpuData,
+                          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                          borderColor: 'rgba(255, 99, 132, 1)',
+                          borderWidth: 1
+                      }]
+                  }
+              });
+  
+              // Storage Chart
+              const storageData = stats.map(container => container.storage);
+              const storageChart = new Chart(document.getElementById('storageChart'), {
+                  type: 'bar',
+                  data: {
+                      labels: memoryLabels,
+                      datasets: [{
+                          label: 'Storage (Bytes)',
+                          data: storageData,
+                          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                          borderColor: 'rgba(75, 192, 192, 1)',
+                          borderWidth: 1
+                      }]
+                  }
+              });
+          }
+  
+          // Call renderCharts after the page has loaded
+          window.onload = renderCharts;
+      </script>
+  </body>
+  </html>
+  
+    
